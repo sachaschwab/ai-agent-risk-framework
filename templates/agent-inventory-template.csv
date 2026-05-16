@@ -1,0 +1,2 @@
+agent_name,owner,team,environment,agent_level,purpose,data_sources,tools_connectors,write_capable_actions,risk_tier,approval_status,last_review_date,next_review_date,monitoring_owner
+Customer Support Assistant,support-ops@company.com,Support Operations,pilot,2,Draft support responses,Knowledge base; CRM,CRM read API,None,Medium,Pending,2026-05-16,2026-06-16,sec-ops@company.com
