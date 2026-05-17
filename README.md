@@ -10,7 +10,8 @@ This is a lightweight, implementation-oriented framework to help teams answer:
 
 1. What kind of agent are we dealing with?
 2. What are the primary risks?
-3. What controls should we apply first?
+3. How do those risks map to broad AI risk frameworks such as the MIT AI Risk Repository?
+4. What controls should we apply first?
 
 ## Core idea
 
@@ -29,8 +30,10 @@ Do not govern labels. Govern behavior.
 
 1. Read [agent-levels.md](docs/agent-levels.md)
 2. Review [risk-taxonomy.md](docs/risk-taxonomy.md)
-3. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
-4. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
+3. Score the risk with [risk-scoring-model.md](docs/risk-scoring-model.md)
+4. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
+5. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
+6. Add open risks to [risk-register-template.csv](templates/risk-register-template.csv)
 
 ## Repository structure
 
@@ -39,10 +42,14 @@ Do not govern labels. Govern behavior.
 - `templates/`: reusable governance templates
 - `examples/`: sample agent profiles and risk summaries
 
-## Current scope (Week 1 baseline)
+## Current scope
 
 - Five-level agent behavior model
-- 12-category agent risk taxonomy
+- 12-category agent risk taxonomy with `AAR-*` IDs
+- Practical sub-risk layer with `AAR-xx.yy` IDs
+- MIT AI Risk Repository parent-domain mapping
+- Risk register template
+- Initial risk scoring model
 - Initial controls map
 - First-pass review checklist
 - Agent risk summary template
@@ -50,7 +57,8 @@ Do not govern labels. Govern behavior.
 
 ## What is intentionally out of scope for now
 
-- Full regulatory control mapping (NIST AI RMF, ISO 42001, EU AI Act article-level mapping)
+- Full article-by-article regulatory control mapping
+- Full evidence-by-evidence mapping to every row in the MIT AI Risk Database
 - Automated scoring engine
 - End-to-end policy enforcement code
 
