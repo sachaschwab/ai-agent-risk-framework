@@ -31,13 +31,15 @@ Do not govern labels. Govern behavior.
 1. Read [agent-levels.md](docs/agent-levels.md)
 2. Review [risk-taxonomy.md](docs/risk-taxonomy.md)
 3. Score the risk with [risk-scoring-model.md](docs/risk-scoring-model.md)
-4. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
-5. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
-6. Add open risks to [risk-register-template.csv](templates/risk-register-template.csv)
+4. Assess the agent with the [Agent Risk Assessment](assessment/README.md) templates and CLI
+5. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
+6. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
+7. Add open risks to [risk-register-template.csv](templates/risk-register-template.csv)
 
 ## Repository structure
 
 - `docs/`: framework definitions and control guidance
+- `assessment/`: pre-production assessment template, completed example, YAML example, and scoring CLI
 - `checklists/`: fast operational review checklists
 - `templates/`: reusable governance templates
 - `examples/`: sample agent profiles and risk summaries
@@ -51,9 +53,25 @@ Do not govern labels. Govern behavior.
 - Risk register template
 - Initial risk scoring model
 - Initial controls map
+- Agent risk assessment template and basic scoring CLI
+- Static HTML agent risk assessment tool preview
 - First-pass review checklist
 - Agent risk summary template
 - Example agent profiles
+
+## Agent risk assessment CLI
+
+From `assessment/`:
+
+```bash
+../bin/agent-risk score examples/customer-support-agent.yaml
+```
+
+Or, if `bin/` is on your `PATH`:
+
+```bash
+agent-risk score examples/customer-support-agent.yaml
+```
 
 ## What is intentionally out of scope for now
 

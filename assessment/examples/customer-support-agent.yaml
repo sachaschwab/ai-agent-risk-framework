@@ -1,0 +1,51 @@
+name: Customer Support Refund Agent
+business_owner: Customer Operations
+technical_owner: AI Platform Team
+support_owner: Support Operations Lead
+incident_owner: Support Operations Lead
+use_case: Prepare customer refunds from support requests
+business_process: Customer support refunds
+deployment_channel: Support console pilot
+launch_scope: Internal pilot
+production_trigger: User-initiated support case
+primary_users:
+  - Support agents
+affected_parties:
+  - Customers
+autonomy_score: 2
+tool_access_score: 3
+data_sensitivity_score: 2
+business_impact_score: 2
+human_oversight:
+  required: true
+  description: Supervisor approval is required before the refund API can be called.
+approval_points:
+  - action: Issue refund
+    threshold: Refunds above CHF 100 require supervisor approval
+tools:
+  - name: order_lookup
+    access: read
+    purpose: Retrieve order history
+  - name: refund_api
+    access: write
+    purpose: Issue approved refunds
+data_sources:
+  - name: Order history
+    sensitivity: customer personal data
+  - name: Refund policy
+    sensitivity: internal policy
+logging:
+  captures_trace_id: true
+  captures_tool_calls: true
+  captures_human_approval: true
+controls:
+  least_privilege_tools: true
+  approval_for_high_impact_actions: true
+  prompt_injection_tests: true
+  monitoring_owner_assigned: true
+red_flags:
+  no_business_owner: false
+  no_logging: false
+  excessive_permissions: false
+  irreversible_action_without_approval: false
+  unclear_legal_basis_for_personal_data: false
