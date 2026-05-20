@@ -32,14 +32,16 @@ Do not govern labels. Govern behavior.
 2. Review [risk-taxonomy.md](docs/risk-taxonomy.md)
 3. Score the risk with [risk-scoring-model.md](docs/risk-scoring-model.md)
 4. Assess the agent with the [Agent Risk Assessment](assessment/README.md) templates and CLI
-5. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
-6. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
-7. Add open risks to [risk-register-template.csv](templates/risk-register-template.csv)
+5. Define tool controls with the [Tool Permissions Matrix](tool-permissions/README.md)
+6. Run [ai-agent-first-review-checklist.md](checklists/ai-agent-first-review-checklist.md) on one real agent
+7. Fill in [agent-risk-summary-template.md](templates/agent-risk-summary-template.md)
+8. Add open risks to [risk-register-template.csv](templates/risk-register-template.csv)
 
 ## Repository structure
 
 - `docs/`: framework definitions and control guidance
 - `assessment/`: pre-production assessment template, completed example, YAML example, and scoring CLI
+- `tool-permissions/`: policy format, example policies, Python/TypeScript evaluators, tests, and static tool preview
 - `checklists/`: fast operational review checklists
 - `templates/`: reusable governance templates
 - `examples/`: sample agent profiles and risk summaries
@@ -55,6 +57,9 @@ Do not govern labels. Govern behavior.
 - Initial controls map
 - Agent risk assessment template and basic scoring CLI
 - Static HTML agent risk assessment tool preview
+- Tool permission matrix examples with allow/deny/approval/constrained-allow policies
+- Python and TypeScript policy evaluators with decision tests
+- Static HTML tool permission matrix preview
 - First-pass review checklist
 - Agent risk summary template
 - Example agent profiles

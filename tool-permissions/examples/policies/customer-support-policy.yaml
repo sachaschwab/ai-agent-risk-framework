@@ -1,0 +1,25 @@
+policy_name: customer_support_agent_policy
+version: "1.0"
+
+tools:
+  order_lookup:
+    decision: allow
+    access: read
+
+  issue_refund:
+    decision: constrained_allow
+    access: write
+    constraints:
+      currency: EUR
+      max_amount_without_approval: 100
+      approval_required_above: 100
+
+  send_customer_email:
+    decision: approval_required
+    access: write
+    constraints:
+      allowed_sender_domain: support.example.com
+
+  delete_customer_account:
+    decision: deny
+    access: admin

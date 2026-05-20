@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Tool Permission Matrix</title>
+  <style>
+    :root {
+      --bg: #111418;
+      --panel: #1a2027;
+      --text: #e9eef3;
+      --muted: #9fb0bf;
+      --border: #2b3742;
+      --accent: #f8931d;
+      --ok: #36d399;
+      --warn: #fbbf24;
+      --deny: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; }
+    p { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    select, input {
+      width: 100%;
+      background: #131920;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    button {
+      background: var(--accent);
+      color: #1a1204;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .result { margin-top: 18px; }
+    .pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .allow { background: rgba(54,211,153,.2); color: var(--ok); border: 1px solid rgba(54,211,153,.5); }
+    .approval_required { background: rgba(251,191,36,.2); color: var(--warn); border: 1px solid rgba(251,191,36,.5); }
+    .deny { background: rgba(248,113,113,.2); color: var(--deny); border: 1px solid rgba(248,113,113,.5); }
+    pre {
+      background: #131920;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Agent Tool Permission Matrix</h1>
+    <p>Static preview of policy evaluation decisions for allow, deny, and approval-required outcomes.</p>
+
+    <div class="grid">
+      <div class="card">
+        <label for="tool">Tool</label>
+        <select id="tool">
+          <option value="order_lookup">order_lookup</option>
+          <option value="issue_refund">issue_refund</option>
+          <option value="send_customer_email">send_customer_email</option>
+          <option value="delete_customer_account">delete_customer_account</option>
+        </select>
+      </div>
+      <div class="card">
+        <label for="currency">Currency</label>
+        <select id="currency">
+          <option>EUR</option>
+          <option>CHF</option>
+          <option>USD</option>
+        </select>
+      </div>
+      <div class="card">
+        <label for="amount">Amount</label>
+        <input id="amount" type="number" min="0" step="1" value="80">
+      </div>
+      <div class="card">
+        <label for="senderDomain">Sender domain</label>
+        <input id="senderDomain" type="text" value="support.example.com">
+      </div>
+    </div>
+
+    <button id="evaluateBtn">Evaluate Request</button>
+
+    <div class="result card">
+      <p><strong>Decision:</strong> <span id="decisionPill" class="pill deny">deny</span></p>
+      <p><strong>Reason:</strong> <span id="reasonText">not evaluated</span></p>
+      <pre id="requestPreview"></pre>
+    </div>
+  </div>
+
+  <script>
+    const policy = {
+      tools: {
+        order_lookup: { decision: "allow", access: "read" },
+        issue_refund: {
+          decision: "constrained_allow",
+          access: "write",
+          constraints: { currency: "EUR", max_amount_without_approval: 100, approval_required_above: 100 }
+        },
+        send_customer_email: {
+          decision: "approval_required",
+          access: "write",
+          constraints: { allowed_sender_domain: "support.example.com" }
+        },
+        delete_customer_account: { decision: "deny", access: "admin" }
+      }
+    };
+
+    function evaluateTool(policy, request) {
+      const tp = policy.tools[request.tool];
+      const params = request.params || {};
+      if (!tp) return { decision: "deny", reason: "tool_not_in_policy" };
+      if (tp.decision === "allow") return { decision: "allow", reason: "explicit_allow" };
+      if (tp.decision === "deny") return { decision: "deny", reason: "explicit_deny" };
+      if (tp.decision === "approval_required") return { decision: "approval_required", reason: "policy_requires_approval" };
+
+      const c = tp.constraints || {};
+      if (c.currency && params.currency !== c.currency) return { decision: "deny", reason: "constraint_currency_mismatch" };
+      if (typeof params.amount === "number") {
+        if (typeof c.approval_required_above === "number" && params.amount > c.approval_required_above) {
+          return { decision: "approval_required", reason: "constraint_amount_above_approval_threshold" };
+        }
+        if (typeof c.max_amount_without_approval === "number" && params.amount <= c.max_amount_without_approval) {
+          return { decision: "allow", reason: "within_constrained_threshold" };
+        }
+      }
+      if (typeof c.allowed_sender_domain === "string" && params.sender_domain) {
+        if (params.sender_domain !== c.allowed_sender_domain) {
+          return { decision: "deny", reason: "constraint_sender_domain_not_allowed" };
+        }
+        return { decision: "allow", reason: "sender_domain_allowed" };
+      }
+      return { decision: "allow", reason: "constrained_allow_default_pass" };
+    }
+
+    const toolEl = document.getElementById("tool");
+    const currencyEl = document.getElementById("currency");
+    const amountEl = document.getElementById("amount");
+    const senderDomainEl = document.getElementById("senderDomain");
+    const decisionPillEl = document.getElementById("decisionPill");
+    const reasonTextEl = document.getElementById("reasonText");
+    const requestPreviewEl = document.getElementById("requestPreview");
+
+    function run() {
+      const request = {
+        tool: toolEl.value,
+        params: {
+          currency: currencyEl.value,
+          amount: Number(amountEl.value),
+          sender_domain: senderDomainEl.value
+        }
+      };
+      const out = evaluateTool(policy, request);
+      decisionPillEl.textContent = out.decision;
+      decisionPillEl.className = "pill " + out.decision;
+      reasonTextEl.textContent = out.reason;
+      requestPreviewEl.textContent = JSON.stringify(request, null, 2);
+    }
+
+    document.getElementById("evaluateBtn").addEventListener("click", run);
+    run();
+  </script>
+</body>
+</html>

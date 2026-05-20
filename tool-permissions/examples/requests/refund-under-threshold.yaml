@@ -1,0 +1,4 @@
+tool: issue_refund
+params:
+  currency: EUR
+  amount: 80

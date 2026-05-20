@@ -1,0 +1,15 @@
+policy_name: security_agent_policy
+version: "1.0"
+
+tools:
+  enrich_alert:
+    decision: allow
+    access: read
+
+  isolate_endpoint:
+    decision: approval_required
+    access: write
+
+  disable_edr:
+    decision: deny
+    access: admin
